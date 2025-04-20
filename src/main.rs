@@ -178,6 +178,12 @@ fn main() {
         let frame_time = std::time::Duration::from_millis(1000 / 16);
         let mut delay = std::time::Duration::ZERO;
         loop {
+            if delay > frame_time {
+                frame_ready_rx.recv().unwrap();
+                new_request_tx.send(()).unwrap();
+                delay -= frame_time;
+                continue;
+            }
             let now = std::time::Instant::now();
             frame_ready_rx.recv().unwrap();
             {
